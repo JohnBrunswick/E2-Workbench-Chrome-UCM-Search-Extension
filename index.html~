@@ -1,0 +1,181 @@
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>UCM jQuery Plugin</title>
+
+	<!-- load jQuery 1.4.1 from Google's Content Delivery Network (fastest performance) -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+	<!-- load the UCM jQuery plugin -->
+	<script type="text/javascript" src="jquery.oracle-ucm-1.0.js"></script>
+
+	<!-- the jQuery code to execute javascript when the buttons are clicked -->
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+			// add an error handler for AJAX snafus
+			$(document).ajaxError(function(e, xmlHttp, settings, exception) {
+				alert("Unable to process the Ajax request to: " + settings.url + "\nException: " + exception +
+					"\nStatus: (" + xmlHttp.status + ") " + xmlHttp.statusText);
+			});
+
+			// set the path to UCM: you may need to modify this
+			$.ucm.cgiPath = "http://owcvm03/cs/idcplg";
+
+			// 'ping' the content server to test the connection
+			$("#pingServer").click(function(){
+				var testData = {
+					IdcService : "PING_SERVER"
+				};
+				$.ucm.executeService(testData, function(ucmResponse){
+					var msg = ucmResponse.getValue("StatusMessage");
+					alert(msg);
+				});
+				return false;
+			});
+
+			// use the 'schema' functionality to download the option list of doc types.
+			// this can be used to dowload any ucm schema
+			$("#getTypes").click(function() {
+				$.ucm.getSchemaValues('docTypes', null, null, function(ucmResponse){
+					var msg = "Content Types:\n";
+					var docTypes = ucmResponse.ResultSets['doctypes'];
+					for (var rowIndex in docTypes.rows) {
+						var row = ucmResponse.getRow(docTypes, rowIndex);
+						msg = msg + "\t" + row.dDocType + "\n";
+					}
+					alert(msg);
+				});
+				return false;
+			});
+
+			// use schema 'views' and 'relations' to download a dynamic choice list,
+			// in this case, getting the 'skins' enabled for the 'Trays' layout
+			$("#getSkins").click(function() {
+				$.ucm.getSchemaValues('LmLayoutSkinPairs', 'LmLayoutToSkin', 'Trays', function(ucmResponse){
+					var msg = "Skins for the 'Trays' layout:\n";
+					var pairs = ucmResponse.ResultSets['lmlayoutskinpairs'];
+					for (var rowIndex in pairs.rows) {
+						var row = ucmResponse.getRow(pairs, rowIndex);
+						msg = msg + "\t" + row.skin + "\n";
+					}
+					alert(msg);
+				});
+				return false;
+			});
+
+			// run a search and display the results
+			$("#runSearch").click(function() {
+				var temp = $("#searchResults").html();
+				var text = $("#quickSearch").val();
+				$.ucm.quickSearch(text, function(ucmResponse) {
+					// draw the results to the page
+					var resultHtml = "";
+					var searchResults = ucmResponse.ResultSets.SearchResults;
+					for (var rowIndex in searchResults.rows) {
+						var row = ucmResponse.getRow("SearchResults", rowIndex);
+						resultHtml = resultHtml + "<tr><td>" + row.dDocName +
+							"</td><td>" + row.dDocTitle + "</td><td>" + row.dDocAuthor + "</td></tr>\n";
+					}
+					$("#searchResults tbody").html(resultHtml);
+					$("#searchResults").show();
+				});
+				return false;
+			});
+		});
+	</script>
+
+	<!-- some simple styles for the table -->
+	<style type="text/css">
+		table, td, th {
+			border:1px solid #3c608d;
+		}
+		th {
+			background-color:#3c608d;
+			color:white;
+		}
+	</style>
+
+</head>
+<body>
+
+<h2>UCM jQuery Plugin</h2>
+
+<p>This <a href="http://jquery.com/">jQuery</a> plugin shows how to connect to the content server
+using pure JavaScript, execute service calls, and display results. This page
+<a href="http://code.google.com/apis/ajaxlibs/documentation/">loads jQuery from Google</a> for
+better performance.</p>
+
+<h3>Documentation</h3>
+
+<p>You will need to be familiar with jQuery before yo can use this plug-in. You can start with
+the <a href="http://www.w3schools.com/jquery/default.asp">jQuery tutorial at W3Schools</a>.</p>
+
+<p>This plug-in is essentially a collection of wrappers around the <b>$.post()</b> method in
+jQuery, to allow you to more easily make AJAX calls to Oracle UCM. For example, the "Test Connection"
+button below will call the "PING_SERVER" service, and pop-up a status message. To do this,
+we use the following code:</p>
+
+<xmp>
+<form>
+<button id="pingServer" name="pingServer">Test Connection</button>
+</form>
+<script>
+$("#pingServer").click(function(){
+	var testData = {
+		IdcService : "PING_SERVER"
+	};
+	$.ucm.executeService(testData, function(ucmResponse){
+		var msg = ucmResponse.getValue("StatusMessage");
+		alert(msg);
+	});
+	return false;
+});
+</script>
+</xmp>
+
+<p>Notice how we have to pass <b>function(ucmResponse){}</b> as a parameter to the <b>executeService</b>
+method... and then fill that function with the code we want to run <b>after</b> the request completes.
+This may look odd, but it's standard procedure for jQuery, and asynchronous JavaScript.</p>
+
+<p>The ucmResponse object is a standard <a href="http://en.wikipedia.org/wiki/JSON">JSON</a> data object, with
+the following convenience functions added:</p>
+
+<ul>
+<li><b>getValue('value')</b> looks in the LocalData and the ResultSets to get a value from the response.</li>
+<li><b>getRow('resultSetName', index)</b> gets the row in the specific ResultSet at the specific index as
+	an associative array (hashtable) of name-value pairs.</li>
+<li><b>findRowIndex('resultSetName', 'column', 'value')</b> returns the first row index in the result set
+	where the column equals the specified value.</li>
+</ul>
+
+<h3>Tests</h3>
+
+<p>To run these tests, first set the value for <b>$.ucm.cgiPath</b> in this file to be
+the HttpCgiPath to your content server. Then check-in this file (index.html) and the jQuery
+plug-in to UCM. Make sure they are in the same security group, account, and content type.
+Then click on any of he buttons below to run services with pure jQuery JavaScript.</p>
+
+<form>
+	<button id="pingServer" name="pingServer">Test Connection</button> <br />
+	<button id="getTypes" name="getTypes">Get Content Types</button><br />
+	<button id="getSkins" name="getSkins">Get 'Skins' For The 'Trays' Layout</button><br />
+	<input id="quickSearch" name="quickSearch" type="text" value=""></input>
+	<button id="runSearch" name="runSearch">Run Search</button><br />
+</form>
+
+<br /><br />
+
+<table id="searchResults" title="Search Results" style="display: none">
+	<thead>
+		<tr><th>Content ID</th><th>Title</th><th>Author</th></tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+</body>
+</html>

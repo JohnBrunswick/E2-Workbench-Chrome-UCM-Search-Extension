@@ -1,0 +1,104 @@
+body {
+     overflow-x: hidden;
+     font-family: Arial, Helvetica, sans-serif;
+     background: #ddd;
+     padding: 0;
+     margin: 10px 20px 10px 10px;
+}
+
+#wrapper {
+     -moz-box-shadow: 0 0 5px 5px #efefef;
+     -webkit-box-shadow: 0 0 5px 5px #efefef;
+     box-shadow: 0 0 5px 5px #efefef;
+     border: 1px solid #dddddd;
+     background-color: #fff;
+     border-radius: 10px;
+     -moz-border-radius: 10px;
+     -webkit-border-radius: 10px;
+     width: 600px;
+     padding: 10px;
+     margin-left: auto;
+     margin-right: auto;
+     margin-top: 10px;
+     padding-left: 10px;
+     padding-right: 10px;
+}
+
+#status {
+	 border: 1px solid yellow;
+	 background: #FEFFDF;
+     margin: 10px;
+     padding: 10px;
+}
+
+footer {
+     padding: 30px 0px 10px 0px;
+     font-size: 12px;
+}
+
+.hint {
+     font-size: 12px;
+     display: block;
+}
+
+#ucmCgiPathinfo {
+     padding: 10px 0px 10px 0px;
+}
+
+button.prefButton {
+     display: block;
+     margin-top: 20px;
+     font-family: Arial, Helvetica, sans-serif;
+     font-size: 12px;
+     color: #ffffff;
+     padding: 6px 12px;
+     background: -moz-linear-gradient(top, #e6b1b5 0%, #b00a0a 25%, #bf0000);
+     background: -webkit-gradient(linear, left top, left bottom, from(#e6b1b5), color-stop(0.25, #b00a0a), to(#bf0000));
+     border-radius: 6px;
+     -moz-border-radius: 6px;
+     -webkit-border-radius: 6px;
+     border: 1px solid #b85f00;
+     text-shadow: 0px-1px 1pxrgba(000, 000, 000, 0.2), 0px 1px 0pxrgba(255, 255, 255, 0.3);
+}
+
+.navlink {
+     text-decoration: none;
+     display: block;
+     margin-top: 20px;
+     width: 94px;
+     font-family: Arial, Helvetica, sans-serif;
+     font-size: 12px;
+     color: #ffffff;
+     padding: 6px 12px;
+     background: -moz-linear-gradient(top, #e6b1b5 0%, #b00a0a 25%, #bf0000);
+     background: -webkit-gradient(linear, left top, left bottom, from(#e6b1b5), color-stop(0.25, #b00a0a), to(#bf0000));
+     border-radius: 6px;
+     -moz-border-radius: 6px;
+     -webkit-border-radius: 6px;
+     border: 1px solid #b85f00;
+     text-shadow: 0px-1px 1pxrgba(000, 000, 000, 0.2), 0px 1px 0pxrgba(255, 255, 255, 0.3);
+}
+
+input[type="text"] {
+     font-family: Arial, Sans-Serif;
+     font-size: 12px;
+     padding: 3px;
+     border: solid 1px #dddddd;
+     width: 300px;
+}
+
+#optionlink {
+     float: right;
+     margin-right: 10px;
+}
+
+.links {
+     color: #0000FF;
+     cursor: hand;
+     cursor: pointer;
+}
+
+a {
+     text-decoration: none;
+     color: #000;
+}
